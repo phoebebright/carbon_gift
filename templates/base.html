@@ -1,0 +1,198 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel='stylesheet' href='{{STATIC_URL}}css/fullcalendar.css'>
+    <link rel='stylesheet' href='{{STATIC_URL}}css/datatables/datatables.css'>
+    <link rel='stylesheet' href='{{STATIC_URL}}css/datatables/bootstrap.datatables.css'>
+    <link rel='stylesheet' href='{{STATIC_URL}}scss/chosen.css'>
+    <link rel='stylesheet' href='{{STATIC_URL}}scss/font-awesome/font-awesome.css'>
+    <link rel='stylesheet' href='{{STATIC_URL}}css/app.css'>
+    <link rel="stylesheet" href="{{ STATIC_URL }}django_tables2/themes/paleblue/css/screen.css" />
+
+    <link href='http://fonts.googleapis.com/css?family=Oswald:300,400,700|Open+Sans:400,700,300' rel='stylesheet' type='text/css'>
+
+    <link href="{{STATIC_URL}}favicon.ico" rel="shortcut icon">
+    <link href="{{STATIC_URL}}apple-touch-icon.png" rel="apple-touch-icon">
+    <!-- HTML5 shim and Respond.js IE8 support of HTML5 elements and media queries -->
+    <!--[if lt IE 9]>
+    @javascript html5shiv respond.min
+    <![endif]-->
+
+    <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.10.2/jquery.min.js"></script>
+    <script src="http://ajax.googleapis.com/ajax/libs/jqueryui/1.10.3/jquery-ui.min.js"></script>
+
+    <script type="text/javascript" src="{{STATIC_URL}}js/JSON.js"></script>
+    <script type="text/javascript" src="{{STATIC_URL}}webtest/js/jquery.cookie.min.js"></script>
+    <title>{% block title %}Carbon Gift Register{% endblock %}</title>
+    <style>
+        .side-menu {
+            padding: 10px !important;
+        }
+        .side-bar-text {
+            display: block;
+            border-radius: 0px;
+            border-bottom: 1px solid #292D38;
+            -webkit-box-shadow: inset 0px 1px 0px 0px #434756;
+            box-shadow: inset 0px 1px 0px 0px #434756;
+            color: #fff;
+            font-size: 16px;
+            font-weight: 300;
+            text-transform: uppercase;
+            padding: 15px 18px;
+
+        }
+
+    </style>
+
+    {% block extra_head %}
+    {% endblock extra_head %}
+
+</head>
+<body>
+
+
+<div class="all-wrapper">
+    <div class="row">
+        <div class="col-md-3">
+
+            <div class="side-bar-wrapper collapse navbar-collapse navbar-ex1-collapse">
+                <div class="relative-w">
+                    <div id="logo">
+                        <a href="/" class="logo hidden-sm hidden-xs">
+                            <img src="{{ STATIC_URL }}img/gift_icon-05.png" />
+                        </a>
+    </div>
+                </div>
+
+                <div class="relative-w">
+                    <div class="side-menu side-bar-text">
+
+                        <a href="/help/">
+
+                            <i class="icon-flag"></i> Help
+                        </a>
+
+                    </div>
+                </div>
+
+                               <div class="relative-w">
+                    <div class="side-menu side-bar-text">
+
+                        <a href="/points/">
+                            <span class="badge badge-notifications pull-right alert-animated">{{ user.new_points }}</span>
+                             Points
+                        </a>
+
+                    </div>
+                </div>
+
+                <div class="relative-w">
+                    <div class="side-menu side-bar-text">
+
+                        <p>Conversions</p>
+
+
+                          <p><input id="tonnes" size="6">Tonnes  <span id="t2kg"></span>kg<button id="ton2kg">Convert</button></p>
+                          <p><input id="lbs" size="6">lbs  <span id="lb2kg"></span>kg<button id="lbs2kg">Convert</button></p>
+
+
+                    </div>
+                </div>
+            </div>
+        </div>
+
+
+
+
+        <div class="col-md-9">
+
+            <div class="content-wrapper wood-wrapper">
+                <div class="content-inner">
+                    <div class="page-header">
+                        <div class="header-links hidden-xs">
+
+                            {% if user.is_authenticated %}
+                                <a href="#"><i class="icon-signin"></i>Logged in as {{ user.username }} </a>
+                                <a href="/logout/"><i class="icon-signin"></i>Log Out</a>
+                            {% else %}
+                                <a href="/login/"><i class="icon-signin"></i>Log In</a>
+
+                            {% endif %}
+
+                        </div>
+                        <h1><i class="icon-bar-chart"></i>Carbon Gift Register</h1>
+                    </div>
+
+
+                    <div class="main-content">
+
+                        {% block content %}
+                            {% block main %}
+                            {% endblock main %}
+
+                        {% endblock content %}
+                    </div>
+
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+
+
+
+
+<script>
+    $(document).ready(function() {
+
+        $("#menu_dashboard").addClass("current");
+        $("#menu_dashboard:a").addClass("current");
+    });
+</script>
+
+
+<script src='{{STATIC_URL}}js/jquery.sparkline.min.js'></script>
+<script src='{{STATIC_URL}}js/bootstrap/tab.js'></script>
+<script src='{{STATIC_URL}}js/bootstrap/dropdown.js'></script>
+<script src='{{STATIC_URL}}js/bootstrap/collapse.js'></script>
+<script src='{{STATIC_URL}}js/bootstrap/transition.js'></script>
+<script src='{{STATIC_URL}}js/bootstrap/tooltip.js'></script>
+<script src='{{STATIC_URL}}js/jquery.knob.js'></script>
+<script src='{{STATIC_URL}}js/fullcalendar.min.js'></script>
+<script src='{{STATIC_URL}}js/datatables/datatables.min.js'></script>
+<script src='{{STATIC_URL}}js/chosen.jquery.min.js'></script>
+<script src='{{STATIC_URL}}js/datatables/bootstrap.datatables.js'></script>
+<script src='{{STATIC_URL}}js/raphael-min.js'></script>
+<script src='{{STATIC_URL}}js/morris-0.4.3.min.js'></script>
+<script src='{{STATIC_URL}}js/for_pages/color_settings.js'></script>
+<script src='{{STATIC_URL}}js/application.js'></script>
+
+
+
+{% block js %}
+    <script>
+    $(document).ready(function() {
+
+            $("#ton2kg").on("click", function() {
+                var t = parseFloat($("#tonnes").val());
+                var kg = t * 1000;
+                $("#t2kg").text(kg);
+                $("#id_size").val(kg);
+            })
+            $("#lbs2kg").on("click", function() {
+                var t = parseFloat($("#lbs").val());
+                kg = Math.round(t * 0.453592 * 100)/100;
+                $("#lb2kg").text(kg);
+                $("#id_size").val(kg);
+            })
+    });
+    </script>
+{% endblock js %}
+
+</body>
+
+</html>

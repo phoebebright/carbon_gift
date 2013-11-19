@@ -1,0 +1,26 @@
+{% extends "base.html" %}
+
+
+
+{% block main %}
+<div id="login">
+<h1>Login to Carbon Gifts</h1>
+        <form action="/login/" method="post" id="login-form">{% csrf_token %}
+        <label for="username">USERNAME </label><input style="width: 160px; border: 1px solid gray" type="text" name="username" value="" id="username" /><br />
+        <label for="password">PASSWORD </label><input style="width: 160px; border: 1px solid gray" type="password" name="password" value="" id="password" /><br />
+     
+            <button type="submit">Login</button><br />
+
+            <a href="/accounts/register/" class="btn">Register</a>
+
+     
+
+</form>
+
+<script type="text/javascript">
+document.getElementById('id_username').focus()
+</script>
+</div>
+
+{% endblock %}
+

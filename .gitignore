@@ -1,0 +1,11 @@
+*.egg-info
+*.pot
+*.pyc
+*.py[co]
+MANIFEST
+dist/
+docs/_build/
+tests/coverage_html/
+tests/.coverage
+.DS_Store
+*.DS_Store
