@@ -6,9 +6,19 @@ from django.conf import settings
 from django.contrib import admin
 from django.conf.urls.static import static
 
+
+from tastypie.api import Api
+from web.api import *
+
+
+v1_api = Api(api_name='v1')
+v1_api.register(UserPendingPoints())
+
+
 admin.autodiscover()
 
 urlpatterns = patterns('',
+                       url(r'^api/', include(v1_api.urls)),
                        url(r'^login/$', 'django.contrib.auth.views.login', name="login"),
                        url(r'^accounts/login/$', 'django.contrib.auth.views.login', name="login"),
                        url(r'^logout/$', 'django.contrib.auth.views.logout', {'template_name': 'login.html'}, name="logout"),
@@ -30,6 +40,7 @@ urlpatterns += patterns('web.views',
                         url(r'^newfoot/(?P<obj_id>\d+)/$', FootCreate.as_view(), name='foot_new'),
                         url(r'^editfoot/(?P<pk>\d+)/$', FootUpdate.as_view(), name='foot_edit'),
                         url(r'^deletefoot/(?P<pk>\d+)/$', FootDelete.as_view(), name='foot_delete'),
+                        url(r'^listfoot/$', FootList.as_view(), name='foot_list'),
 
                         url(r'^$', login_required(Home.as_view()), name='home'),
 )

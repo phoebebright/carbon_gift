@@ -85,7 +85,7 @@ class Footprint(models.Model):
     object = models.ForeignKey(Object)
     source = models.URLField(help_text="URL of source of footprint", unique=True)
     size = models.DecimalField(max_digits=10, decimal_places=2, help_text="Footprint size in kg", validators=[MinValueValidator(0),
-                                       MaxValueValidator(10000)])
+                                       MaxValueValidator(100000)])
 
     notes = models.TextField(blank=True, null=True)
 
@@ -142,6 +142,8 @@ class Footprint(models.Model):
         self.object.save()
         super(Footprint, self).delete()
 
+
+
 class Points(models.Model):
 
     user = models.ForeignKey(MyUser)
@@ -150,7 +152,8 @@ class Points(models.Model):
     footprint = models.ForeignKey(Footprint)
     comment = models.CharField(max_length=30, blank=True, null=True)
     created = models.DateTimeField(auto_now_add=True)
-    redeemed = models.DateTimeField(blank=True, null=True)
+    pending = models.BooleanField(default=True)
+    redeemed_date = models.DateTimeField(blank=True, null=True)
 
     class Meta:
         ordering = ['-created']
@@ -167,3 +170,7 @@ class Points(models.Model):
             self.user.save()
 
         super(Points, self).save(*args, **kwargs)
+
+    @property
+    def redeemed(self):
+        return self.redeemed_date

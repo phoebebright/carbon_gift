@@ -15,7 +15,8 @@ from django.views.generic import TemplateView,ListView
 from django.views.generic.edit import CreateView, UpdateView, DeleteView
 from django.core.urlresolvers import reverse_lazy
 
-
+from django_tables2 import SingleTableView
+import django_tables2 as tables
 
 #python
 import json
@@ -82,3 +83,24 @@ class FootUpdate(UpdateView):
 class FootDelete(DeleteView):
     model = Footprint
     success_url = reverse_lazy('home')
+
+
+
+class FootprintTable(tables.Table):
+    class Meta:
+        model = Footprint
+        fields = ('object.name', 'size', 'created', 'verified')
+        template_name = "web/footprint_list.html"
+
+
+
+class FootList(SingleTableView):
+
+    table_class = FootprintTable
+
+
+    def get_queryset(self):
+        # user can only view updates for their organisation
+
+        return Footprint.objects.filter(created_by=self.request.user)
+

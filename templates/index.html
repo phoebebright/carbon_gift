@@ -1,12 +1,12 @@
 {% extends "base.html" %}
 {% block main %}
 
-<h1>Carbon Gift Data Entry System</h1>
+<h1>Carbon Footprint Data Entry System</h1>
     <p>The task is to collect carbon footprints for the list of items below.
-        Each item should have up to 3 DIFFERENT footprint sources,
+        Each item should have at least 3 DIFFERENT footprint sources,
         ie. three different values, not just different sources referring to the same footprint value. <a href="help/">More</a></p>
     <div class="row-fluid">
-        <h3>Gifts that require Carbon Footprints</h3>
+        <h3>Items that require Carbon Footprints</h3>
         <ul>
         {% for item in required %}
             <li><a href="/newfoot/{{ item.id }}/">{{ item.name }}</a>&nbsp Footprints required {{ item.feet_required }}</li>

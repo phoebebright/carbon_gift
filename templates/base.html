@@ -3,9 +3,7 @@
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <link rel='stylesheet' href='{{STATIC_URL}}css/fullcalendar.css'>
-    <link rel='stylesheet' href='{{STATIC_URL}}css/datatables/datatables.css'>
-    <link rel='stylesheet' href='{{STATIC_URL}}css/datatables/bootstrap.datatables.css'>
+
     <link rel='stylesheet' href='{{STATIC_URL}}scss/chosen.css'>
     <link rel='stylesheet' href='{{STATIC_URL}}scss/font-awesome/font-awesome.css'>
     <link rel='stylesheet' href='{{STATIC_URL}}css/app.css'>
@@ -25,7 +23,7 @@
 
     <script type="text/javascript" src="{{STATIC_URL}}js/JSON.js"></script>
     <script type="text/javascript" src="{{STATIC_URL}}webtest/js/jquery.cookie.min.js"></script>
-    <title>{% block title %}Carbon Gift Register{% endblock %}</title>
+    <title>{% block title %}Carbon Footprint Database{% endblock %}</title>
     <style>
         .side-menu {
             padding: 10px !important;
@@ -63,7 +61,7 @@
                         <a href="/" class="logo hidden-sm hidden-xs">
                             <img src="{{ STATIC_URL }}img/gift_icon-05.png" />
                         </a>
-    </div>
+                    </div>
                 </div>
 
                 <div class="relative-w">
@@ -77,13 +75,17 @@
                     </div>
                 </div>
 
-                               <div class="relative-w">
+                <div class="relative-w">
                     <div class="side-menu side-bar-text">
 
-                        <a href="/points/">
+                        <p><a href="/points/">
                             <span class="badge badge-notifications pull-right alert-animated">{{ user.new_points }}</span>
-                             Points
-                        </a>
+                            Points
+                        </a></p>
+                        <p>                <a href="/listfoot/">
+
+                            List my Entries
+                        </a></p>
 
                     </div>
                 </div>
@@ -94,8 +96,8 @@
                         <p>Conversions</p>
 
 
-                          <p><input id="tonnes" size="6">Tonnes  <span id="t2kg"></span>kg<button id="ton2kg">Convert</button></p>
-                          <p><input id="lbs" size="6">lbs  <span id="lb2kg"></span>kg<button id="lbs2kg">Convert</button></p>
+                        <p><input id="tonnes" size="6">&nbsp;Tonnes  <span id="t2kg"></span>kg&nbsp;<button id="ton2kg">Convert</button></p>
+                        <p><input id="lbs" size="6">&nbsp;lbs  <span id="lb2kg"></span>kg&nbsp;<button id="lbs2kg">Convert</button></p>
 
 
                     </div>
@@ -162,11 +164,8 @@
 <script src='{{STATIC_URL}}js/bootstrap/transition.js'></script>
 <script src='{{STATIC_URL}}js/bootstrap/tooltip.js'></script>
 <script src='{{STATIC_URL}}js/jquery.knob.js'></script>
-<script src='{{STATIC_URL}}js/fullcalendar.min.js'></script>
-<script src='{{STATIC_URL}}js/datatables/datatables.min.js'></script>
 <script src='{{STATIC_URL}}js/chosen.jquery.min.js'></script>
-<script src='{{STATIC_URL}}js/datatables/bootstrap.datatables.js'></script>
-<script src='{{STATIC_URL}}js/raphael-min.js'></script>
+
 <script src='{{STATIC_URL}}js/morris-0.4.3.min.js'></script>
 <script src='{{STATIC_URL}}js/for_pages/color_settings.js'></script>
 <script src='{{STATIC_URL}}js/application.js'></script>
@@ -175,7 +174,7 @@
 
 {% block js %}
     <script>
-    $(document).ready(function() {
+        $(document).ready(function() {
 
             $("#ton2kg").on("click", function() {
                 var t = parseFloat($("#tonnes").val());
@@ -189,7 +188,7 @@
                 $("#lb2kg").text(kg);
                 $("#id_size").val(kg);
             })
-    });
+        });
     </script>
 {% endblock js %}
 
