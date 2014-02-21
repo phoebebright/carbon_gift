@@ -1,0 +1,89 @@
+{% extends "base.html" %}
+
+{% block extra_head %}
+  <script src="http://d3js.org/d3.v3.min.js"></script>
+   <script type="text/javascript" src="http://datatables.net/download/build/nightly/jquery.dataTables.js?_=4443be4f216820df89cdb150ecdd2d97"></script>
+    <script src="http://dimplejs.org/dist/dimple.v1.1.5.min.js"></script>
+    <script src="{{ STATIC_URL }}js/crossfilter.min.js"></script>
+
+{% endblock %}
+
+{% block main %}
+
+    <h1>Footprints pending verification</h1>
+
+    <div id="chartContainer"></div>
+
+    <div class="table-container">
+        <table id="pending">
+            <thead>
+            <tr>
+                <th>Name</th>
+                <th>Created</th>
+                <th>Points</th>
+
+            </tr>
+            </thead>
+
+            <tbody>
+
+            </tbody>
+
+            <tfoot></tfoot>
+        </table>
+
+    </div>
+
+
+    <script type="text/javascript">
+
+
+        $(document).ready(function() {
+
+   d3.json("/api/v1/user_pending_points/?format=json", function (json) {
+
+       var data = json.objects;
+       draw_table(data);
+
+             // create crossfilter so can slice and dic
+            CF = crossfilter(data);
+
+            // create dimensions
+            CF.created = CF.dimension(function(d) {
+                return d.created.substr(5,2)+"/"+d.created.substr(8,2)+"/"+d.created.substr(0,4);});
+            var bydate = CF.created.group().top(Infinity);
+
+
+                   var svg = dimple.newSvg("#chartContainer", 590, 400);
+      var myChart = new dimple.chart(svg, bydate);
+      myChart.setBounds(60, 30, 510, 305)
+      var x = myChart.addCategoryAxis("x", "key");
+      x.addOrderRule("value");
+      myChart.addMeasureAxis("y", "value");
+      myChart.addSeries(null, dimple.plot.bar);
+      myChart.draw();
+
+            });
+
+
+
+
+      function draw_table(data) {
+            $('#pending').dataTable({
+                data: data,
+                aoColumns: [
+                    {'mData': "name"},
+                    {'mData': "created_date"},
+                    {'mData': "points"}
+                ]
+
+            });
+
+        }
+
+        });
+    </script>
+
+
+
+{% endblock main %}
