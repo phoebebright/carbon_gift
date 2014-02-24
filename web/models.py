@@ -11,8 +11,68 @@ from django.core.validators import MinValueValidator, MaxValueValidator
 from django.contrib.auth.models import BaseUserManager, AbstractUser
 
 from django.db.models.query import QuerySet
+from django.forms.models import model_to_dict
 
 
+class ModelDiffMixin(object):
+    """
+    A model mixin that tracks model fields' values and provide some useful api
+    to know what fields have been changed.
+    alse
+    >>> p.changed_fields
+    []
+    >>> p.rank = 42
+    >>> p.has_changed
+    True
+    >>> p.changed_fields
+    ['rank']
+    >>> p.diff
+    {'rank': (0, 42)}
+    >>> p.categories = [1, 3, 5]
+    >>> p.diff
+    {'categories': (None, [1, 3, 5]), 'rank': (0, 42)}
+    >>> p.get_field_diff('categories')
+    (None, [1, 3, 5])
+    >>> p.get_field_diff('rank')
+    (0, 42)
+    """
+
+    def __init__(self, *args, **kwargs):
+        super(ModelDiffMixin, self).__init__(*args, **kwargs)
+        self.__initial = self._dict
+
+    @property
+    def diff(self):
+        d1 = self.__initial
+        d2 = self._dict
+        diffs = [(k, (v, d2[k])) for k, v in d1.items() if v != d2[k]]
+        return dict(diffs)
+
+    @property
+    def has_changed(self):
+        return bool(self.diff)
+
+    @property
+    def changed_fields(self):
+        return self.diff.keys()
+
+    def get_field_diff(self, field_name):
+        """
+        Returns a diff for field if it's changed and None otherwise.
+        """
+        return self.diff.get(field_name, None)
+
+    def save(self, *args, **kwargs):
+        """
+        Saves model and set initial state.
+        """
+        super(ModelDiffMixin, self).save(*args, **kwargs)
+        self.__initial = self._dict
+
+    @property
+    def _dict(self):
+        return model_to_dict(self, fields=[field.name for field in
+                             self._meta.fields])
 
 CCY_LIST = (('GBP', "Pounds Sterling"),("EUR","Euro"), ("USD","US Dollars"))
 
@@ -28,6 +88,7 @@ class Category(models.Model):
 
     class Meta:
         ordering = ['name']
+        verbose_name_plural = "Categories"
 
     def __unicode__(self):
         return u'%s' % (self.name,)
@@ -68,6 +129,7 @@ class Object(models.Model):
     class Meta:
         ordering = ['name']
 
+
     def __unicode__(self):
         return u'%s' % (self.name,)
 
@@ -81,10 +143,10 @@ class Object(models.Model):
         count = Footprint.objects.filter(object=self).count()
         return 3-count
 
-class Footprint(models.Model):
+class Footprint(models.Model, ModelDiffMixin):
     object = models.ForeignKey(Object)
     source = models.URLField(help_text="URL of source of footprint", unique=True)
-    size = models.DecimalField(max_digits=10, decimal_places=2, help_text="Footprint size in kg", validators=[MinValueValidator(0),
+    size = models.DecimalField(max_digits=10, decimal_places=3, help_text="Footprint size in kg", validators=[MinValueValidator(0),
                                        MaxValueValidator(100000)])
 
     notes = models.TextField(blank=True, null=True)
@@ -94,10 +156,11 @@ class Footprint(models.Model):
     created_by = models.ForeignKey(MyUser)
 
     verified = models.BooleanField(default=False)
+    verified_by = models.ForeignKey(MyUser, related_name="verifier", blank=True, null=True)
 
     class Meta:
         ordering = ['object__name']
-        unique_together = ['object','size']
+
 
     def __unicode__(self):
         return u'%s - %s kg' % (self.object.name,self.size)
@@ -131,10 +194,9 @@ class Footprint(models.Model):
             self.object.save()
         else:
             # award points when verified
-            if self.verified and not old.verified:
-                points = 1
+            if "verified" in self.changed_fields and self.verified:
+                self.award(1, self.verified_by)
 
-                Points.objects.create(user=self.created_by, points=points, object=self.object, footprint=self, comment="Footprint verified")
 
 
     def delete(self):
@@ -142,6 +204,8 @@ class Footprint(models.Model):
         self.object.save()
         super(Footprint, self).delete()
 
+    def award(self, points, user):
+        Points.objects.create(user=user, points=points, object=self.object, footprint=self, comment="Footprint verified")
 
 
 class Points(models.Model):
@@ -157,7 +221,6 @@ class Points(models.Model):
 
     class Meta:
         ordering = ['-created']
-        unique_together = ['object','footprint']
         verbose_name_plural = "Points"
 
     def __unicode__(self):
@@ -169,8 +232,12 @@ class Points(models.Model):
             self.user.new_points += self.points
             self.user.save()
 
+
         super(Points, self).save(*args, **kwargs)
+
+
 
     @property
     def redeemed(self):
         return self.redeemed_date
+

@@ -78,6 +78,10 @@
                 <div class="relative-w">
                     <div class="side-menu side-bar-text">
 
+                        <p><a href="/">
+                            Earn Points
+                        </a></p>
+
                         <p><a href="/points/">
                             <span class="badge badge-notifications pull-right alert-animated">{{ user.new_points }}</span>
                             Points
@@ -97,6 +101,7 @@
 
 
                         <p><input id="tonnes" size="6">&nbsp;Tonnes  <span id="t2kg"></span>kg&nbsp;<button id="ton2kg">Convert</button></p>
+                        <p><input id="grams" size="6">&nbsp;grams  <span id="g2kg"></span>kg&nbsp;<button id="gram2kg">Convert</button></p>
                         <p><input id="lbs" size="6">&nbsp;lbs  <span id="lb2kg"></span>kg&nbsp;<button id="lbs2kg">Convert</button></p>
 
 
@@ -180,6 +185,12 @@
                 var t = parseFloat($("#tonnes").val());
                 var kg = t * 1000;
                 $("#t2kg").text(kg);
+                $("#id_size").val(kg);
+            })
+           $("#gram2kg").on("click", function() {
+                var t = parseFloat($("#grams").val());
+                var kg = t / 1000;
+                $("#g2kg").text(kg);
                 $("#id_size").val(kg);
             })
             $("#lbs2kg").on("click", function() {

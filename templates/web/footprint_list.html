@@ -1,8 +1,8 @@
 {% extends "base.html" %}
 
 {% block extra_head %}
-  <script src="http://d3js.org/d3.v3.min.js"></script>
-   <script type="text/javascript" src="http://datatables.net/download/build/nightly/jquery.dataTables.js?_=4443be4f216820df89cdb150ecdd2d97"></script>
+    <script src="http://d3js.org/d3.v3.min.js"></script>
+    <script type="text/javascript" src="http://datatables.net/download/build/nightly/jquery.dataTables.js?_=4443be4f216820df89cdb150ecdd2d97"></script>
     <script src="http://dimplejs.org/dist/dimple.v1.1.5.min.js"></script>
     <script src="{{ STATIC_URL }}js/crossfilter.min.js"></script>
 
@@ -40,46 +40,59 @@
 
         $(document).ready(function() {
 
-   d3.json("/api/v1/user_pending_points/?format=json", function (json) {
+            d3.json("/api/v1/user_pending_points/?format=json", function (json) {
 
-       var data = json.objects;
-       draw_table(data);
+                var data = json.objects;
+                draw_table(data);
 
-             // create crossfilter so can slice and dic
-            CF = crossfilter(data);
+                // create crossfilter so can slice and dic
+                CF = crossfilter(data);
 
-            // create dimensions
-            CF.created = CF.dimension(function(d) {
-                return d.created.substr(5,2)+"/"+d.created.substr(8,2)+"/"+d.created.substr(0,4);});
-            var bydate = CF.created.group().top(Infinity);
-
-
-                   var svg = dimple.newSvg("#chartContainer", 590, 400);
-      var myChart = new dimple.chart(svg, bydate);
-      myChart.setBounds(60, 30, 510, 305)
-      var x = myChart.addCategoryAxis("x", "key");
-      x.addOrderRule("value");
-      myChart.addMeasureAxis("y", "value");
-      myChart.addSeries(null, dimple.plot.bar);
-      myChart.draw();
-
-            });
+                // create dimensions
+                CF.created = CF.dimension(function(d) {
+                    return d.created.substr(0,10);});
+                var bydate = CF.created.group().top(Infinity);
 
 
+                var svg = dimple.newSvg("#chartContainer", 590, 400);
+                var myChart = new dimple.chart(svg, bydate);
+                myChart.setBounds(60, 30, 510, 305)
+                var x = myChart.addTimeAxis("x", "key", "%Y-%m-%d", "%d%M");
+                x.addOrderRule("value");
+{#                x.overrideMin = new Date("2013-11-01");#}
+{#                x.overrideMax = new Date("2014-03-01");#}
 
-
-      function draw_table(data) {
-            $('#pending').dataTable({
-                data: data,
-                aoColumns: [
-                    {'mData': "name"},
-                    {'mData': "created_date"},
-                    {'mData': "points"}
-                ]
+                myChart.addMeasureAxis("y", "value");
+                myChart.addSeries(null, dimple.plot.bar);
+                myChart.draw();
 
             });
 
-        }
+
+
+
+            function draw_table(data) {
+                $('#pending').dataTable({
+                    data: data,
+                    aoColumns: [
+                        {'mData': "name"},
+                        {'mData': "created_date"},
+                        {'mData': "points"}
+                    ]
+
+                });
+
+            }
+
+            function cleandata(data) {
+
+                $.each(data, function(d) {
+                    this['created'] = Date(this['created']);
+                    var x=1;
+                })
+
+                return data;
+            }
 
         });
     </script>

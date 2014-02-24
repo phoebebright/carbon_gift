@@ -43,7 +43,14 @@ class FootprintAdmin(admin.ModelAdmin):
         model = Footprint
 
 
-    list_display = ('object','size','created_by')
+    list_display = ('object','size','created_by', 'verified', 'verified_by')
+    exclude = ('verified_by', )
+
+
+    def save_model(self, request, obj, form, change):
+        if 'verified'  in obj.changed_fields:
+            obj.verified_by = request.user
+            obj.save()
 
 
 admin.site.register(Footprint, FootprintAdmin)
@@ -54,7 +61,7 @@ class PointsAdmin(admin.ModelAdmin):
         model = Points
 
 
-    list_display = ('user','object','footprint','points')
+    list_display = ('user','object','pending', 'footprint','points')
 
 
 admin.site.register(Points, PointsAdmin)
